@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI Wissen: Bildschirmpräsentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Benutzerdefinierte Stile für die Präsentation */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f4f8; /* Heller Hintergrund */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Padding für kleinere Bildschirme */
+            box-sizing: border-box;
+        }
+        .presentation-container {
+            background-color: #ffffff;
+            border-radius: 15px; /* Abgerundete Ecken */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 960px; /* Maximale Breite für Desktop */
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Verhindert Scrollbalken bei Folienwechsel */
+        }
+        .slide {
+            display: none; /* Standardmäßig alle Folien ausblenden */
+            padding: 40px;
+            flex-grow: 1;
+            animation: fadeIn 0.5s ease-out; /* Animation für Folienwechsel */
+        }
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-title {
+            font-size: 2.5rem; /* Großer Titel */
+            font-weight: 700;
+            color: #2c3e50; /* Dunkler Text */
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .slide-content ul {
+            list-style: none; /* Keine Standard-Listenpunkte */
+            padding: 0;
+            margin: 0;
+        }
+        .slide-content li {
+            font-size: 1.2rem; /* Lesbarer Text */
+            color: #34495e;
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        .slide-content li::before {
+            content: '•'; /* Benutzerdefinierte Listenpunkte */
+            color: #3498db; /* Blaue Farbe */
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            border-top: 1px solid #ecf0f1; /* Trennlinie */
+        }
+        .nav-button {
+            background-color: #3498db; /* Blauer Button */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px; /* Abgerundete Ecken */
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .nav-button:hover {
+            background-color: #2980b9; /* Dunklerer Blauton beim Hover */
+            transform: translateY(-2px); /* Leichter Hoch-Effekt */
+        }
+        .nav-button:disabled {
+            background-color: #bdc3c7; /* Grauer Button wenn deaktiviert */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .slide-indicator {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            .slide-title {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+            .slide-content li {
+                font-size: 1rem;
+                margin-bottom: 10px;
+                padding-left: 25px;
+            }
+            .slide-content li::before {
+                font-size: 1.2rem;
+            }
+            .navigation-controls {
+                padding: 15px 20px;
+                flex-direction: column; /* Buttons untereinander auf kleinen Bildschirmen */
+                gap: 15px;
+            }
+            .nav-button {
+                width: 100%; /* Buttons volle Breite */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide active" id="slide-1">
+            <h2 class="slide-title">KI als "Blackbox" und das Projekt "KI Wissen"</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Die EU bevorzugt keine KI als "Blackbox", da KI-Entscheidungen nachvollziehbar sein müssen.</li>
+                    <li>Das Projekt "KI Wissen" vereint einen modularen Ansatz mit Deep Learning.</li>
+                    <li>Der modulare Ansatz beinhaltet Verkehrsregeln und Verhaltensweisen.</li>
+                    <li>Der aktuelle Stand der Entwicklung ist noch weit entfernt.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-2">
+            <h2 class="slide-title">Sicherheit, Verlässlichkeit und die Verbindung von Weltwissen mit Mustererkennung</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Es geht um ein hohes Maß an Sicherheit und Verlässlichkeit, da Menschenleben betroffen sind.</li>
+                    <li>Der Knackpunkt ist die Verbindung von Weltwissen mit Mustererkennung.</li>
+                    <li>KI muss die Bedeutung von provisorischen Fahrbahnmarkierungen auf Baustellen erkennen können.</li>
+                    <li>Es wird versucht, die Blackbox-KI durch wissensbasierte Systeme zu ergänzen.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-3">
+            <h2 class="slide-title">Extraktion von Wissen aus KI-Modellen und Dateneffizienz</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Es geht darum, wie Wissen aus KI-Modellen extrahiert werden kann.</li>
+                    <li>Das Zusammenspiel von Umweltwahrnehmung und Bilderkennung ist wichtig.</li>
+                    <li>Dateneffizienz ist entscheidend, da viele Daten für das Training sicherer KIs benötigt werden.</li>
+                    <li>Deep Learning alleine reicht nicht, sondern muss durch wissensbasierte Ergänzung ergänzt werden.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-4">
+            <h2 class="slide-title">Regelbasiertes Wissen und autonomes Fahren</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Regelbasiertes Wissen ist notwendig, um Algorithmen und Bilderkennungssoftware mit trainiertem Weltwissen zu verarbeiten.</li>
+                    <li>Es ist unklar, wie sich die Arbeit des VDI von bereits existierendem autonomem Fahren unterscheidet.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-5">
+            <h2 class="slide-title">Transparenz und Erklärbarkeit von KI</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Das Problem der mangelnden Transparenz und Erklärbarkeit von KI wird anhand eines Beispiels von Google vor Gericht verdeutlicht.</li>
+                    <li>Es ist notwendig, KI-Entscheidungen simulierbar zu machen, um Transparenz zu gewährleisten.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-6">
+            <h2 class="slide-title">Abhängigkeit von Menschen und ethische Anforderungen</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Die Abhängigkeit von Menschen bei der Interpretation von Daten durch KI und Big Data wird hervorgehoben.</li>
+                    <li>Es werden die lange Entwicklungszeit und die hohen Anforderungen an Sicherheit und Ethik betont.</li>
+                    <li>Erfahrungen mit autonomen Taxis in den USA und teilautonomen Systemen in Deutschland werden ausgetauscht.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-7">
+            <h2 class="slide-title">Alltagstauglichkeit und die Blackbox Deep Learning</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Die Komplexität des Themas wird anhand von Anwendungsfällen verdeutlicht, wobei die Frage der Alltagstauglichkeit im Vordergrund steht.</li>
+                    <li>Deep Learning wird als ein Prozess beschrieben, bei dem Informationen von Layer zu Layer weitergegeben werden, wobei der genaue Ablauf oft nicht nachvollziehbar ist.</li>
+                    <li>Die Notwendigkeit eines Bypasses mit wissensbasierten Modellen wird betont.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-8">
+            <h2 class="slide-title">Entscheidungsfindung und Priorisierung von KI</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Es wird die Entscheidungsfindung von KI in Bezug auf die Erfassung und Zuordnung von Informationen, die Handlungsalternativen und die Priorisierung bei abweichenden Ereignissen diskutiert.</li>
+                    <li>Die Reduktion von allgemeinen Regeln aus speziellen Daten wird als wichtiger Aspekt genannt, insbesondere im Hinblick auf Handlungsanleitungen in Millisekunden.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-9">
+            <h2 class="slide-title">Daten Effizienz und qualitative Unterscheidung</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Die Abhängigkeit von externen Rechenzentren und die Notwendigkeit der Daten Effizienz werden betont.</li>
+                    <li>Es wird die Schwierigkeit der qualitativen Unterscheidung wesentlicher Informationen hervorgehoben.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-10">
+            <h2 class="slide-title">Interaktion Mensch & Roboter, Level des autonomen Fahrens</h2>
+            <div class="slide-content">
+                <ul>
+                    <li>Die Komplexität der Interaktion zwischen Mensch und Roboter wird am Beispiel der Werkzeugübergabe erläutert, um die Herausforderungen bei der Nachbildung menschlicher Fähigkeiten zu verdeutlichen.</li>
+                    <li>Sabine erläutert die fünf Level des autonomen Fahrens, die auf Umweltwahrnehmung, Situationsverständnis und Handlungsfähigkeit basieren.</li>
+                    <li>Das Projekt KI Wissen vereint den modularen Ansatz mit Deep Learning, um ein hohes Maß an Sicherheit zu gewährleisten.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="navigation-controls">
+            <button id="prevBtn" class="nav-button">Zurück</button>
+            <span id="slideIndicator" class="slide-indicator">Folie 1 von 10</span>
+            <button id="nextBtn" class="nav-button">Weiter</button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript für die Foliennavigation
+        const slides = document.querySelectorAll('.slide'); // Alle Folien-Elemente
+        const prevBtn = document.getElementById('prevBtn'); // Button "Zurück"
+        const nextBtn = document.getElementById('nextBtn'); // Button "Weiter"
+        const slideIndicator = document.getElementById('slideIndicator'); // Folienanzeige
+
+        let currentSlide = 0; // Aktueller Folienindex (startet bei 0)
+
+        /**
+         * Zeigt die aktuelle Folie an und aktualisiert die Navigationsbuttons und den Indikator.
+         */
+        function showSlide() {
+            // Alle Folien ausblenden
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+            });
+
+            // Aktuelle Folie anzeigen
+            slides[currentSlide].classList.add('active');
+
+            // Buttons aktivieren/deaktivieren
+            prevBtn.disabled = (currentSlide === 0); // "Zurück" deaktivieren, wenn auf der ersten Folie
+            nextBtn.disabled = (currentSlide === slides.length - 1); // "Weiter" deaktivieren, wenn auf der letzten Folie
+
+            // Folienindikator aktualisieren
+            slideIndicator.textContent = `Folie ${currentSlide + 1} von ${slides.length}`;
+        }
+
+        /**
+         * Geht zur nächsten Folie.
+         */
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide();
+            }
+        }
+
+        /**
+         * Geht zur vorherigen Folie.
+         */
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide();
+            }
+        }
+
+        // Event Listener für die Navigationsbuttons
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // Initialisierung beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', showSlide);
+    </script>
+</body>
+</html>
