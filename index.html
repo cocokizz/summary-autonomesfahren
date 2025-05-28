@@ -1,313 +1,357 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KI Wissen: Bildschirmpräsentation</title>
+    <title>Autonomes Fahren: Interaktive Übersicht</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices: 
+        - Aktueller Stand (Levels): Presented as a series of descriptive cards for each level using HTML/Tailwind. Goal: Inform & Compare. Interaction: Clear visual separation and easy reading. Justification: Structured way to present distinct categories.
+        - Herausforderungen: Presented as a list of key challenges with descriptive text. Goal: Inform. Interaction: None beyond readability. Justification: Direct and clear presentation.
+        - Rolle von Big Data (Vier V): Four distinct content blocks (cards) with Unicode icons (💾, 🔄, ⚡, ✅). Goal: Inform & Organize. Interaction: None. Justification: Clear separation and explanation of concepts.
+        - Datenprozess: Structured explanation of Sammlung, Analyse, Interpretation with Unicode icons (📡, 📊, 🧠). Goal: Explain process. Interaction: None. Justification: Logical flow presentation.
+        - Fazit & Summary: Text blocks. Goal: Summarize. Interaction: None. Justification: Standard text.
+        - No Chart.js/Plotly.js used as the report is primarily textual/conceptual without specific datasets suitable for charting.
+    -->
     <style>
-        /* Benutzerdefinierte Stile für die Präsentation */
         body {
-            font-family: "Inter", sans-serif;
-            background-color: #f0f4f8; /* Heller Hintergrund */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px; /* Padding für kleinere Bildschirme */
-            box-sizing: border-box;
+            font-family: 'Inter', sans-serif; /* Using Inter as a professional sans-serif font */
         }
-        .presentation-container {
-            background-color: #ffffff;
-            border-radius: 15px; /* Abgerundete Ecken */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 960px; /* Maximale Breite für Desktop */
-            min-height: 600px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Verhindert Scrollbalken bei Folienwechsel */
-        }
-        .slide {
-            display: none; /* Standardmäßig alle Folien ausblenden */
-            padding: 40px;
-            flex-grow: 1;
-            animation: fadeIn 0.5s ease-out; /* Animation für Folienwechsel */
-        }
-        .slide.active {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .slide-title {
-            font-size: 2.5rem; /* Großer Titel */
-            font-weight: 700;
-            color: #2c3e50; /* Dunkler Text */
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .slide-content ul {
-            list-style: none; /* Keine Standard-Listenpunkte */
-            padding: 0;
-            margin: 0;
-        }
-        .slide-content li {
-            font-size: 1.2rem; /* Lesbarer Text */
-            color: #34495e;
-            margin-bottom: 15px;
-            padding-left: 30px;
-            position: relative;
-        }
-        .slide-content li::before {
-            content: '•'; /* Benutzerdefinierte Listenpunkte */
-            color: #3498db; /* Blaue Farbe */
-            font-size: 1.5rem;
-            position: absolute;
-            left: 0;
-            top: -2px;
-        }
-        .navigation-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            border-top: 1px solid #ecf0f1; /* Trennlinie */
-        }
-        .nav-button {
-            background-color: #3498db; /* Blauer Button */
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px; /* Abgerundete Ecken */
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            border: none;
-            outline: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .nav-button:hover {
-            background-color: #2980b9; /* Dunklerer Blauton beim Hover */
-            transform: translateY(-2px); /* Leichter Hoch-Effekt */
-        }
-        .nav-button:disabled {
-            background-color: #bdc3c7; /* Grauer Button wenn deaktiviert */
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .slide-indicator {
-            font-size: 1.1rem;
-            color: #7f8c8d;
-            font-weight: 500;
-        }
+        /* Fallback for Inter font if not loaded via Tailwind's default */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .slide {
-                padding: 20px;
-            }
-            .slide-title {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
-            }
-            .slide-content li {
-                font-size: 1rem;
-                margin-bottom: 10px;
-                padding-left: 25px;
-            }
-            .slide-content li::before {
-                font-size: 1.2rem;
-            }
-            .navigation-controls {
-                padding: 15px 20px;
-                flex-direction: column; /* Buttons untereinander auf kleinen Bildschirmen */
-                gap: 15px;
-            }
-            .nav-button {
-                width: 100%; /* Buttons volle Breite */
-            }
+        .content-section {
+            padding-top: 4rem; /* Adjust based on nav height */
+            min-height: calc(100vh - 4rem); /* Ensure sections can fill viewport if content is short */
+        }
+        .content-section:last-of-type {
+            min-height: auto; /* Allow last section to not force full viewport height */
+            padding-bottom: 4rem;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #2563eb; /* blue-600 */
+            border-bottom-color: #2563eb; /* blue-600 */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* shadow-lg */
+            padding: 1.5rem; /* p-6 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); /* shadow-2xl */
+        }
+        .icon-style {
+            font-size: 1.875rem; /* text-3xl */
+            margin-right: 0.75rem; /* mr-3 */
+            color: #3b82f6; /* blue-500 */
         }
     </style>
 </head>
-<body>
-    <div class="presentation-container">
-        <div class="slide active" id="slide-1">
-            <h2 class="slide-title">KI als "Blackbox" und das Projekt "KI Wissen"</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Die EU bevorzugt keine KI als "Blackbox", da KI-Entscheidungen nachvollziehbar sein müssen.</li>
-                    <li>Das Projekt "KI Wissen" vereint einen modularen Ansatz mit Deep Learning.</li>
-                    <li>Der modulare Ansatz beinhaltet Verkehrsregeln und Verhaltensweisen.</li>
-                    <li>Der aktuelle Stand der Entwicklung ist noch weit entfernt.</li>
-                </ul>
+<body class="bg-stone-50 text-slate-800 antialiased">
+
+    <nav class="bg-white/80 backdrop-blur-md shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-blue-700">Autonomes Fahren</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#aktueller-stand" class="nav-link text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Aktueller Stand</a>
+                        <a href="#herausforderungen" class="nav-link text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Herausforderungen</a>
+                        <a href="#big-data" class="nav-link text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Big Data</a>
+                        <a href="#datenprozess" class="nav-link text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Datenprozess</a>
+                        <a href="#fazit" class="nav-link text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Fazit</a>
+                        <a href="#summary" class="nav-link text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Summary</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-500 hover:text-slate-700 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                        <span class="sr-only">Menü öffnen</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
-
-        <div class="slide" id="slide-2">
-            <h2 class="slide-title">Sicherheit, Verlässlichkeit und die Verbindung von Weltwissen mit Mustererkennung</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Es geht um ein hohes Maß an Sicherheit und Verlässlichkeit, da Menschenleben betroffen sind.</li>
-                    <li>Der Knackpunkt ist die Verbindung von Weltwissen mit Mustererkennung.</li>
-                    <li>KI muss die Bedeutung von provisorischen Fahrbahnmarkierungen auf Baustellen erkennen können.</li>
-                    <li>Es wird versucht, die Blackbox-KI durch wissensbasierte Systeme zu ergänzen.</li>
-                </ul>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#aktueller-stand" class="nav-link text-slate-600 hover:bg-slate-200 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Aktueller Stand</a>
+                <a href="#herausforderungen" class="nav-link text-slate-600 hover:bg-slate-200 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Herausforderungen</a>
+                <a href="#big-data" class="nav-link text-slate-600 hover:bg-slate-200 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Big Data</a>
+                <a href="#datenprozess" class="nav-link text-slate-600 hover:bg-slate-200 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Datenprozess</a>
+                <a href="#fazit" class="nav-link text-slate-600 hover:bg-slate-200 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Fazit</a>
+                <a href="#summary" class="nav-link text-slate-600 hover:bg-slate-200 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Summary</a>
             </div>
         </div>
+    </nav>
 
-        <div class="slide" id="slide-3">
-            <h2 class="slide-title">Extraktion von Wissen aus KI-Modellen und Dateneffizienz</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Es geht darum, wie Wissen aus KI-Modellen extrahiert werden kann.</li>
-                    <li>Das Zusammenspiel von Umweltwahrnehmung und Bilderkennung ist wichtig.</li>
-                    <li>Dateneffizienz ist entscheidend, da viele Daten für das Training sicherer KIs benötigt werden.</li>
-                    <li>Deep Learning alleine reicht nicht, sondern muss durch wissensbasierte Ergänzung ergänzt werden.</li>
-                </ul>
+    <main class="pt-16"> <section id="aktueller-stand" class="content-section bg-stone-100 py-12 md:py-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-10 text-center">1. Aktueller Stand autonomes Fahren</h2>
+                <p class="text-lg text-slate-700 mb-12 text-center max-w-3xl mx-auto">
+                    Das autonome Fahren wird in fünf Stufen unterteilt, wobei die Entwicklung derzeit primär die Stufen 2 und 3 betrifft. Diese Sektion beleuchtet die einzelnen Stufen und den aktuellen Status der Technologie.
+                </p>
+                <div class="space-y-8">
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">Stufe 0: Keine Automatisierung</h3>
+                        <p class="text-slate-600">Der Fahrer steuert das Fahrzeug vollständig und ist permanent für alle Fahraufgaben verantwortlich.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">Stufe 1: Assistiertes Fahren</h3>
+                        <p class="text-slate-600">Das System unterstützt den Fahrer bei spezifischen Aufgaben wie Lenkung ODER Beschleunigung/Verzögerung (z.B. adaptiver Tempomat, Spurhalteassistent). Der Fahrer bleibt voll verantwortlich.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">Stufe 2: Teilautomatisiertes Fahren</h3>
+                        <p class="text-slate-600">Das System kann Lenken UND Beschleunigen/Verzögern gleichzeitig übernehmen (z.B. Stauassistent). Der Fahrer muss jedoch jederzeit die Umgebung überwachen und bereit sein, die Kontrolle sofort zu übernehmen.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">Stufe 3: Bedingt automatisiertes Fahren</h3>
+                        <p class="text-slate-600">Das Fahrzeug kann in bestimmten, klar definierten Szenarien (z.B. Autobahnstau) selbstständig fahren und die Umgebung überwachen. Der Fahrer muss erst nach einer Aufforderung durch das System wieder eingreifen und die Kontrolle übernehmen. Viele aktuelle Entwicklungen zielen auf diese Stufe ab.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">Stufe 4: Hochautomatisiertes Fahren</h3>
+                        <p class="text-slate-600">Das Fahrzeug fährt in bestimmten Bereichen oder unter bestimmten Bedingungen (z.B. definierte Autobahnabschnitte, Parkhäuser) vollautomatisch. Der Fahrer muss nicht mehr ständig überwachen und kann sich anderen Tätigkeiten zuwenden, muss aber nach Aufforderung die Kontrolle übernehmen können.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">Stufe 5: Vollautomatisiertes Fahren</h3>
+                        <p class="text-slate-600">Das Fahrzeug fährt in allen Situationen und unter allen Bedingungen vollständig autonom. Ein Fahrer ist nicht mehr notwendig; das Fahrzeug hat keine klassischen Bedienelemente wie Lenkrad oder Pedale mehr.</p>
+                    </div>
+                </div>
+                <div class="mt-12 p-6 bg-blue-50 rounded-lg shadow">
+                    <h4 class="text-lg font-semibold text-blue-800 mb-3">Aktueller Status und zentrale Herausforderungen:</h4>
+                    <p class="text-slate-700 mb-2">Derzeit sind viele Fahrzeuge auf der Straße mit Systemen der Stufe 2 ausgestattet. Stufe 3 ist in einigen Ländern bereits zugelassen, jedoch stark eingeschränkt im Einsatz.</p>
+                    <p class="text-slate-700">Die KI als "Blackbox", bei der Entscheidungen nicht immer transparent nachvollziehbar sind, stellt eine große Herausforderung dar. Die EU fordert eine Nachvollziehbarkeit von KI-Entscheidungen, was Entwicklung und Zulassung maßgeblich beeinflusst. Projekte wie "KI Wissen" versuchen, durch modulare Ansätze Verkehrsregeln und Verhaltensweisen zu vereinen, um Transparenz und Sicherheit zu erhöhen.</p>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="slide" id="slide-4">
-            <h2 class="slide-title">Regelbasiertes Wissen und autonomes Fahren</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Regelbasiertes Wissen ist notwendig, um Algorithmen und Bilderkennungssoftware mit trainiertem Weltwissen zu verarbeiten.</li>
-                    <li>Es ist unklar, wie sich die Arbeit des VDI von bereits existierendem autonomem Fahren unterscheidet.</li>
-                </ul>
+        <section id="herausforderungen" class="content-section bg-white py-12 md:py-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-10 text-center">2. Herausforderungen und Bedürfnisse</h2>
+                 <p class="text-lg text-slate-700 mb-12 text-center max-w-3xl mx-auto">
+                    Die Entwicklung des autonomen Fahrens ist ein komplexes Unterfangen mit zahlreichen technischen, ethischen und gesellschaftlichen Herausforderungen. Diese Sektion beleuchtet die wichtigsten Aspekte.
+                </p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">🛡️ Sicherheit und Verlässlichkeit</h3>
+                        <p class="text-slate-600">Da Menschenleben auf dem Spiel stehen, ist eine nahezu 100%ige Sicherheit und Verlässlichkeit der KI-Systeme unerlässlich. Jeder Fehler kann katastrophale Folgen haben.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">🚦 Umgang mit unvorhergesehenen Situationen</h3>
+                        <p class="text-slate-600">KI muss "Weltwissen" mit "Mustererkennung" verbinden, um z.B. provisorische Fahrbahnmarkierungen oder unerwartete Hindernisse korrekt zu interpretieren. Reine Deep-Learning-Systeme stoßen hier an Grenzen.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">💾 Dateneffizienz</h3>
+                        <p class="text-slate-600">Für das Training sicherer KIs werden enorme Datenmengen benötigt. Gleichzeitig muss die Datennutzung effizient sein, da Rechenkapazitäten und Speicher begrenzt sind.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">🔍 Transparenz und Erklärbarkeit (XAI)</h3>
+                        <p class="text-slate-600">Die "Blackbox"-Natur vieler KI-Modelle erschwert die Nachvollziehbarkeit ihrer Entscheidungen. KI-Entscheidungen müssen simulierbar und verständlich gemacht werden.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">🤝 Kombination von Ansätzen</h3>
+                        <p class="text-slate-600">Reines Deep Learning reicht oft nicht. Es bedarf einer Ergänzung durch wissensbasierte Systeme und regelbasiertes Wissen, um Algorithmen robust zu machen.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-2">🚶 Alltagstauglichkeit und menschliche Interaktion</h3>
+                        <p class="text-slate-600">Die komplexe Interaktion zwischen Mensch und Roboter und die sichere Navigation in unübersichtlichen, dynamischen Umgebungen sind große Hürden für die Alltagstauglichkeit.</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="slide" id="slide-5">
-            <h2 class="slide-title">Transparenz und Erklärbarkeit von KI</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Das Problem der mangelnden Transparenz und Erklärbarkeit von KI wird anhand eines Beispiels von Google vor Gericht verdeutlicht.</li>
-                    <li>Es ist notwendig, KI-Entscheidungen simulierbar zu machen, um Transparenz zu gewährleisten.</li>
-                </ul>
+        <section id="big-data" class="content-section bg-stone-100 py-12 md:py-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-10 text-center">3. Die Rolle von Big Data</h2>
+                <p class="text-lg text-slate-700 mb-12 text-center max-w-3xl mx-auto">
+                   Big Data ist das Rückgrat des autonomen Fahrens. Ohne die Verarbeitung riesiger Datenmengen wäre die Entwicklung undenkbar. Die "vier V" von Big Data charakterisieren diese Datenmengen und ihre Herausforderungen.
+                </p>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="card text-center">
+                        <span class="icon-style">💾</span>
+                        <h3 class="text-xl font-semibold text-slate-800 mt-2 mb-2">Volumen (Volume)</h3>
+                        <p class="text-slate-600">Autonome Fahrzeuge generieren Gigabytes an Daten pro Sekunde (Kameras, Lidar, Radar). Diese Menge ist nötig, um vielfältige Fahrsituationen abzudecken.</p>
+                    </div>
+                    <div class="card text-center">
+                        <span class="icon-style">🔄</span>
+                        <h3 class="text-xl font-semibold text-slate-800 mt-2 mb-2">Vielfalt (Variety)</h3>
+                        <p class="text-slate-600">Daten stammen aus diversen Quellen (Sensoren, Karten, Wetter) und Formaten (strukturiert, unstrukturiert). Ihre Integration ist komplex.</p>
+                    </div>
+                    <div class="card text-center">
+                        <span class="icon-style">⚡</span>
+                        <h3 class="text-xl font-semibold text-slate-800 mt-2 mb-2">Geschwindigkeit (Velocity)</h3>
+                        <p class="text-slate-600">Daten müssen in Echtzeit gesammelt und analysiert werden, um schnelle, sichere Entscheidungen zu ermöglichen. Millisekunden zählen.</p>
+                    </div>
+                    <div class="card text-center">
+                        <span class="icon-style">✅</span>
+                        <h3 class="text-xl font-semibold text-slate-800 mt-2 mb-2">Wahrhaftigkeit (Veracity)</h3>
+                        <p class="text-slate-600">Die Qualität und Zuverlässigkeit der Daten ist entscheidend. Fehlerhafte Daten können zu gefährlichen Fehlentscheidungen führen.</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="slide" id="slide-6">
-            <h2 class="slide-title">Abhängigkeit von Menschen und ethische Anforderungen</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Die Abhängigkeit von Menschen bei der Interpretation von Daten durch KI und Big Data wird hervorgehoben.</li>
-                    <li>Es werden die lange Entwicklungszeit und die hohen Anforderungen an Sicherheit und Ethik betont.</li>
-                    <li>Erfahrungen mit autonomen Taxis in den USA und teilautonomen Systemen in Deutschland werden ausgetauscht.</li>
-                </ul>
+        <section id="datenprozess" class="content-section bg-white py-12 md:py-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-10 text-center">4. Daten: Sammlung, Analyse, Interpretation</h2>
+                <p class="text-lg text-slate-700 mb-12 text-center max-w-3xl mx-auto">
+                    Der Umgang mit Daten ist ein kontinuierlicher Kreislauf, der von der Erfassung über die Analyse bis hin zur Interpretation reicht, um nützliche Einsichten und letztendlich sichere Fahrentscheidungen zu generieren.
+                </p>
+                <div class="space-y-10">
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-style">📡</span>
+                            <div>
+                                <h3 class="text-2xl font-semibold text-slate-800 mb-3">Datensammlung</h3>
+                            </div>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-slate-600 pl-4">
+                            <li><strong>Sensoren:</strong> Kameras (visuell), Lidar & Radar (Abstand, 3D-Modelle), Ultraschall (Parken).</li>
+                            <li><strong>Fahrzeugdaten:</strong> Telemetrie (Geschwindigkeit, Lenkwinkel, Bremsdruck).</li>
+                            <li><strong>Externe Daten:</strong> Wetter, HD-Karten, Verkehrsfluss, Baustelleninfos.</li>
+                            <li><strong>Flottendaten:</strong> Anonymisierte Daten von Testflotten zur Erfassung seltener Ereignisse und kontinuierlichen Algorithmusverbesserung.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                         <div class="flex items-start">
+                            <span class="icon-style">📊</span>
+                            <div>
+                                <h3 class="text-2xl font-semibold text-slate-800 mb-3">Datenanalyse</h3>
+                            </div>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-slate-600 pl-4">
+                            <li><strong>Mustererkennung & Deep Learning:</strong> Training neuronaler Netze zur Objekt- und Verhaltenserkennung.</li>
+                            <li><strong>Fusion von Sensordaten:</strong> Kombination von Sensordaten für ein robustes Umgebungsbild.</li>
+                            <li><strong>Szenarien-Analyse:</strong> Identifikation und Analyse kritischer Fahrsituationen zur Aufdeckung von Schwachstellen.</li>
+                            <li><strong>Regelbasierte Systeme:</strong> Aufbau von Wissensbasen (Verkehrsregeln, Fahrverhalten) als Ergänzung zu Deep Learning.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-style">🧠</span>
+                            <div>
+                                <h3 class="text-2xl font-semibold text-slate-800 mb-3">Dateninterpretation und Einsichtgenerierung</h3>
+                            </div>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-slate-600 pl-4">
+                            <li><strong>Situationsverständnis:</strong> Ableitung eines umfassenden Verständnisses der aktuellen Verkehrssituation.</li>
+                            <li><strong>Handlungsplanung:</strong> Generierung und Bewertung von Handlungsalternativen (Geschwindigkeit, Lenkung, Bremsen).</li>
+                            <li><strong>Priorisierung:</strong> Auswahl der sichersten Handlungsalternative in Millisekunden bei Unsicherheiten.</li>
+                            <li><strong>Modelloptimierung:</strong> Rückfluss der Einsichten in Entwicklung und Training der KI-Modelle, inkl. Wissensextraktion.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="slide" id="slide-7">
-            <h2 class="slide-title">Alltagstauglichkeit und die Blackbox Deep Learning</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Die Komplexität des Themas wird anhand von Anwendungsfällen verdeutlicht, wobei die Frage der Alltagstauglichkeit im Vordergrund steht.</li>
-                    <li>Deep Learning wird als ein Prozess beschrieben, bei dem Informationen von Layer zu Layer weitergegeben werden, wobei der genaue Ablauf oft nicht nachvollziehbar ist.</li>
-                    <li>Die Notwendigkeit eines Bypasses mit wissensbasierten Modellen wird betont.</li>
-                </ul>
+        <section id="fazit" class="content-section bg-stone-100 py-12 md:py-20">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-10 text-center">5. Fazit</h2>
+                 <p class="text-lg text-slate-700 mb-6">
+                    Autonomes Fahren ist eine der transformativsten Technologien unserer Zeit, steht jedoch vor erheblichen Herausforderungen. Diese Sektion fasst die wichtigsten Erkenntnisse zusammen und gibt einen Ausblick.
+                </p>
+                <div class="card space-y-4">
+                    <p class="text-slate-700">Autonomes Fahren ist eine der größten technologischen Herausforderungen unserer Zeit. Während die Technologie enorme Fortschritte macht, insbesondere in den Stufen 2 und 3, sind noch wesentliche Hürden zu überwinden, bevor Stufe 5 (vollständige Autonomie) erreicht wird.</p>
+                    <p class="text-slate-700">Die Komplexität des Straßenverkehrs, die Notwendigkeit absoluter Sicherheit und die vielfältigen ethischen Implikationen erfordern eine intensive und langjährige Forschung und Entwicklung.</p>
+                    <p class="text-slate-700"><strong class="text-slate-800">Big Data</strong> ist dabei der unverzichtbare Treibstoff, der die KI-Systeme antreibt und ihnen ermöglicht, die komplexe Realität des Straßenverkehrs zu "lernen" und zu "verstehen". Die Kombination aus <strong class="text-slate-800">Deep Learning und wissensbasierten Systemen</strong> sowie ein starker Fokus auf <strong class="text-slate-800">Transparenz und Erklärbarkeit (XAI)</strong> sind entscheidend, um das notwendige Vertrauen in diese Zukunftstechnologie aufzubauen.</p>
+                    <p class="text-slate-700">Die lange Entwicklungszeit und die extrem hohen Anforderungen an Sicherheit und Ethik, insbesondere im Hinblick auf den Schutz von Menschenleben und die Interaktion mit der Umwelt, zeigen, dass das autonome Fahren noch einen weiten Weg vor sich hat, bis es flächendeckend und zuverlässig im alltäglichen Straßenverkehr eingesetzt werden kann.</p>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="slide" id="slide-8">
-            <h2 class="slide-title">Entscheidungsfindung und Priorisierung von KI</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Es wird die Entscheidungsfindung von KI in Bezug auf die Erfassung und Zuordnung von Informationen, die Handlungsalternativen und die Priorisierung bei abweichenden Ereignissen diskutiert.</li>
-                    <li>Die Reduktion von allgemeinen Regeln aus speziellen Daten wird als wichtiger Aspekt genannt, insbesondere im Hinblick auf Handlungsanleitungen in Millisekunden.</li>
-                </ul>
+        <section id="summary" class="content-section bg-white py-12 md:py-20">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-10 text-center">Zusammenfassung der wichtigsten Punkte</h2>
+                <p class="text-lg text-slate-700 mb-6">
+                    Hier sind die Kernpunkte des Berichts über autonomes Fahren noch einmal kompakt zusammengefasst.
+                </p>
+                <div class="card space-y-4">
+                    <ul class="list-disc list-inside space-y-3 text-slate-700">
+                        <li><strong>Aktueller Stand:</strong> Überwiegend Stufe 2 (teilautomatisiert) und Stufe 3 (bedingt automatisiert). "Blackbox"-KI ist eine Herausforderung; EU fordert Nachvollziehbarkeit (z.B. Projekt "KI Wissen").</li>
+                        <li><strong>Herausforderungen:</strong> Absolute Sicherheit/Verlässlichkeit, Verbindung von Weltwissen mit Mustererkennung (z.B. Baustellen), Dateneffizienz, Transparenz/Erklärbarkeit (XAI).</li>
+                        <li><strong>Rolle von Big Data (4V):</strong>
+                            <ul class="list-circle list-inside ml-6 mt-1 space-y-1">
+                                <li><strong>Volumen:</strong> Riesige Sensordatenmengen.</li>
+                                <li><strong>Vielfalt:</strong> Daten aus verschiedenen Quellen/Formaten.</li>
+                                <li><strong>Geschwindigkeit:</strong> Echtzeitverarbeitung.</li>
+                                <li><strong>Wahrhaftigkeit:</strong> Hohe Datenqualität.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Datenprozess:</strong> Sammlung (Sensoren) → Analyse (Deep Learning, regelbasierte Systeme) → Situationsverständnis → Handlungsplanung → Modelloptimierung.</li>
+                        <li><strong>Fazit:</strong> Immense technologische Herausforderung. Big Data als Grundlage. Kombination von Deep Learning & wissensbasierten Systemen nötig. Sicherheit, Ethik und lange Entwicklungszeit sind zentrale Aspekte.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        </section>
+    </main>
 
-        <div class="slide" id="slide-9">
-            <h2 class="slide-title">Daten Effizienz und qualitative Unterscheidung</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Die Abhängigkeit von externen Rechenzentren und die Notwendigkeit der Daten Effizienz werden betont.</li>
-                    <li>Es wird die Schwierigkeit der qualitativen Unterscheidung wesentlicher Informationen hervorgehoben.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-10">
-            <h2 class="slide-title">Interaktion Mensch & Roboter, Level des autonomen Fahrens</h2>
-            <div class="slide-content">
-                <ul>
-                    <li>Die Komplexität der Interaktion zwischen Mensch und Roboter wird am Beispiel der Werkzeugübergabe erläutert, um die Herausforderungen bei der Nachbildung menschlicher Fähigkeiten zu verdeutlichen.</li>
-                    <li>Sabine erläutert die fünf Level des autonomen Fahrens, die auf Umweltwahrnehmung, Situationsverständnis und Handlungsfähigkeit basieren.</li>
-                    <li>Das Projekt KI Wissen vereint den modularen Ansatz mit Deep Learning, um ein hohes Maß an Sicherheit zu gewährleisten.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="navigation-controls">
-            <button id="prevBtn" class="nav-button">Zurück</button>
-            <span id="slideIndicator" class="slide-indicator">Folie 1 von 10</span>
-            <button id="nextBtn" class="nav-button">Weiter</button>
-        </div>
-    </div>
+    <footer class="bg-slate-800 text-stone-300 py-8 text-center">
+        <p>&copy; <span id="currentYear"></span> Interaktive Übersicht zum Autonomen Fahren. Alle Rechte vorbehalten.</p>
+    </footer>
 
     <script>
-        // JavaScript für die Foliennavigation
-        const slides = document.querySelectorAll('.slide'); // Alle Folien-Elemente
-        const prevBtn = document.getElementById('prevBtn'); // Button "Zurück"
-        const nextBtn = document.getElementById('nextBtn'); // Button "Weiter"
-        const slideIndicator = document.getElementById('slideIndicator'); // Folienanzeige
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelectorAll('.nav-link'); // For desktop and mobile
 
-        let currentSlide = 0; // Aktueller Folienindex (startet bei 0)
+        mobileMenuButton.addEventListener('click', () => {
+            const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true' || false;
+            mobileMenuButton.setAttribute('aria-expanded', !expanded);
+            mobileMenu.classList.toggle('hidden');
+            // Toggle icons
+            mobileMenuButton.querySelectorAll('svg').forEach(icon => icon.classList.toggle('hidden'));
+        });
 
-        /**
-         * Zeigt die aktuelle Folie an und aktualisiert die Navigationsbuttons und den Indikator.
-         */
-        function showSlide() {
-            // Alle Folien ausblenden
-            slides.forEach((slide, index) => {
-                slide.classList.remove('active');
+        // Smooth scroll for all nav links and close mobile menu on click
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // For mobile menu links, close the menu
+                if (mobileMenu.classList.contains('block') || !mobileMenu.classList.contains('hidden')) {
+                     if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenuButton.setAttribute('aria-expanded', 'false');
+                        mobileMenuButton.querySelectorAll('svg').forEach(icon => icon.classList.toggle('hidden'));
+                     }
+                }
             });
+        });
+        
+        // Active nav link highlighting on scroll
+        const sections = document.querySelectorAll('section[id]');
+        function updateActiveNavLink() {
+            let index = sections.length;
 
-            // Aktuelle Folie anzeigen
-            slides[currentSlide].classList.add('active');
-
-            // Buttons aktivieren/deaktivieren
-            prevBtn.disabled = (currentSlide === 0); // "Zurück" deaktivieren, wenn auf der ersten Folie
-            nextBtn.disabled = (currentSlide === slides.length - 1); // "Weiter" deaktivieren, wenn auf der letzten Folie
-
-            // Folienindikator aktualisieren
-            slideIndicator.textContent = `Folie ${currentSlide + 1} von ${slides.length}`;
-        }
-
-        /**
-         * Geht zur nächsten Folie.
-         */
-        function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                showSlide();
+            while(--index && window.scrollY + 100 < sections[index].offsetTop) {} // 100 as offset
+            
+            navLinks.forEach((link) => link.classList.remove('active', 'text-blue-600', 'border-blue-600'));
+            // Find the corresponding link (works for desktop and mobile if hrefs match)
+            const activeLink = document.querySelector(`.nav-link[href="#${sections[index].id}"]`);
+            if (activeLink) {
+                 activeLink.classList.add('active', 'text-blue-600', 'border-blue-600');
+                 // Also ensure mobile link (if separate structure) gets updated if needed
+                 const mobileActiveLink = document.querySelector(`#mobile-menu .nav-link[href="#${sections[index].id}"]`);
+                 if (mobileActiveLink) {
+                    mobileActiveLink.classList.add('active', 'text-blue-600'); // Mobile links might not have border
+                 }
             }
         }
+        window.addEventListener('scroll', updateActiveNavLink);
+        updateActiveNavLink(); // Initial call
 
-        /**
-         * Geht zur vorherigen Folie.
-         */
-        function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                showSlide();
-            }
-        }
-
-        // Event Listener für die Navigationsbuttons
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
-
-        // Initialisierung beim Laden der Seite
-        document.addEventListener('DOMContentLoaded', showSlide);
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
